@@ -1,0 +1,46 @@
+- name: Install Kubernetes
+  hosts: azure
+  user: azureuser
+  become: yes
+
+  tasks:
+
+  - name: Check Updates
+    command: sudo apt-get update
+
+  - name: Install HTTPS tools
+    command: sudo apt-get install -y apt-transport-https
+
+  - name: Get Apt-Key
+    shell:
+      cmd: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+  - name: Get Source List
+    shell:
+      cmd: echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+
+  - name: Update
+    command: sudo apt-get update
+
+  - name: Install Kubectl
+    command: sudo apt-get install -y kubectl
+
+  - name: Get Virtualbox Key
+    shell:
+      cmd: wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+
+  - name: Install Virtualbox
+    command: sudo apt install -y virtualbox
+
+  - name: Get MiniK
+    command: curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+  - name: Change MiniK Permissions
+    command: chmod +x minikube
+
+  - name: Move MiniK
+    command: sudo mv minikube /usr/local/bin/
+
+  - name: Start MiniK
+    become: false
+    command: minikube start --vm-driver=virtualbox

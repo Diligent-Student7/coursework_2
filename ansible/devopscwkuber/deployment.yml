@@ -1,0 +1,22 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devopscw
+  namespace: devopscw
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: devopscw
+  template:
+    metadata:
+      labels:
+        app: devopscw
+    spec:
+      containers:
+      - name: devopscw
+        image: madeba201/devopscw:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9090

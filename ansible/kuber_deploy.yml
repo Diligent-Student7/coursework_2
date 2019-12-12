@@ -1,0 +1,36 @@
+- name: Deploy Kubernetes nodes
+  hosts: azure
+  user: azureuser
+
+  vars:
+    myResourceGroup: devopscw
+    myVM: ansible-node
+
+  tasks:
+
+  - stat:
+      path: /home/azureuser/devopscwkuber
+    register: result
+
+  - name: Copy Kuberfiles to Node
+    copy:
+      src: ./devopscwkuber
+      dest: /home/azureuser
+    when: result.stat.exists == false
+
+  - stat:
+      path: /home/azureuser/kuber.sh
+    register: result
+
+  - name: Copy kuber.sh to Node
+    copy:
+      src: ./kuber.sh
+      dest: /home/azureuser/kuber.sh
+    when: result.stat.exists == false
+
+  - name: Set kuber.sh permissions
+    become: true
+    command: chmod +x /home/azureuser/kuber.sh
+
+  - name: Run kuber image setup script
+    command: sudo /home/azureuser/kuber.sh
